@@ -23,6 +23,7 @@ def process_data(uploaded_file):
             df = pd.read_csv(
                 uploaded_file,
                 encoding=encoding,
+                skiprows=1,
                 sep=';',  # Usa ponto-e-vírgula como separador
                 parse_dates=['Data Cadastro'],
                 dayfirst=True
