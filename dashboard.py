@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import chardet
+from datetime import timedelta
 
 # Configuração do dashboard
 st.set_page_config(page_title="Análise de Indexação", layout="wide")
@@ -58,8 +59,6 @@ def process_data(uploaded_file):
 df = process_data(uploaded_file)
 
 if df is not None:
-    # ... (restante do código permanece igual ao anterior)
-    # [Insira aqui o código de visualização que estava na versão anterior]
     # Sidebar com filtros
     st.sidebar.header("Filtros")
     
@@ -95,6 +94,29 @@ if df is not None:
     col1.metric("Total de Indexações", total_indexacoes)
     col2.metric("Tempo Ativo (minutos)", f"{tempo_ativo:.1f}")
     col3.metric("Média por Indexação (min)", f"{media_por_indexacao:.1f}")
+    
+    # Nova seção para previsão de indexações
+    st.subheader("Previsão de Indexações")
+    
+    # Widget para selecionar o período em minutos
+    minutos_selecionados = st.number_input(
+        "Quantos minutos de trabalho deseja simular?",
+        min_value=1,
+        max_value=1440,  # 24 horas
+        value=60,
+        step=1
+    )
+    
+    # Calcula a quantidade estimada de indexações
+    if media_por_indexacao > 0:
+        estimativa = minutos_selecionados / media_por_indexacao
+        st.metric(
+            f"Indexações estimadas em {minutos_selecionados} minutos",
+            f"{estimativa:.1f}",
+            help=f"Baseado na média atual de {media_por_indexacao:.1f} minutos por indexação"
+        )
+    else:
+        st.warning("Não há dados suficientes para calcular a estimativa.")
     
     # Gráfico de indexações por hora
     st.subheader("Indexações por Hora do Dia")
